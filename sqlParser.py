@@ -27,24 +27,19 @@ identifiers_in_data = []
 def evaluate_sql(sql_string):
     # need to fix keywords in SELECT and COUNT
     # I can find the keywords first and make them not to match
-    p_SELECT = re.compile('SELECT([\w+,\w+]+|\*)FROM(?!$|\W|\w+\W|'+keywords+')')
+    p_SELECT = re.compile('(SELECT|select)([\w+,\w+]+|\*)(FROM|from)(?!$|\W|\w+\W|'+keywords+')')
     p_COUNT = re.compile('SELECTCOUNT\(\w+\)FROM(?!$|\W|\w+\W|'+keywords+')')
     p_DROP = re.compile('(DROP|TRUNCATE)TABLE(?!$|\W|\w+\W|'+keywords+')')
-    #p_DELETE = re.compile('DELETEFROM(?!$|\W|\w+\W|'+keywords+')')
-    p_DELETE = re.compile('DELETEFROM\w+WHERE\w+[=|>|<|>=|<=|<>](\'\w+\'|\d+)')
-    print(p_DELETE.findall(sql_string))
+    p_DELETE = re.compile('DELETEFROM\w+WHERE\w+[=|>|<|>=|<=|<>](\'\w+\'||\d+)')
 
     patterns = (p_SELECT, p_COUNT, p_DROP, p_DELETE)
-    #os.system('cls')
     band = False
     for i in patterns:
         if i.match(sql_string):
             band = True
-            print('Pattern:', i)
-            print(i.findall(sql_string))
-            print('La sentencia SQL es correcta.')
+            return 1
     if band==False:
-        print('Comando incorrecto.')
+        return 0
 
     # DELETE FROM Customers WHERE CustomerName='Alfreds Futterkiste';
     # DELETE FROM table_name;
