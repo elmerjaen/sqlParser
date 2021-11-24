@@ -8,38 +8,28 @@ import os
 
 keywords = 'SELECT|FROM|DISTINCT|WHERE|BETWEEN|AND|COUNT|DROP|TABLE'
 
-keywords_in_data = []
-identifiers_in_data = []
-
-# def delete_repeated_identifier(identifiers, sql_string):
-#     unique_identifiers = []
-#     for i in identifiers:
-#         if i not in unique_identifiers:
-#             unique_identifiers.append(i)
-    
-#     unique_identifiers.append('\*') # * para la sentencia SELECT
-#     var = ""
-#     keywords = ""
-#     var += ',|'.join(unique_identifiers)
-#     keywords += '|'.join(reserved_keywords)
-#     evaluate_sql(var, keywords, sql_string)
-
 def evaluate_sql(sql_string):
-    # need to fix keywords in SELECT and COUNT
-    # I can find the keywords first and make them not to match
-    p_SELECT = re.compile('(SELECT|select)([\w+,\w+]+|\*)(FROM|from)(?!$|\W|\w+\W|'+keywords+')')
-    p_COUNT = re.compile('SELECTCOUNT\(\w+\)FROM(?!$|\W|\w+\W|'+keywords+')')
-    p_DROP = re.compile('(DROP|TRUNCATE)TABLE(?!$|\W|\w+\W|'+keywords+')')
-    p_DELETE = re.compile('DELETEFROM\w+WHERE\w+[=|>|<|>=|<=|<>](\'\w+\'||\d+)')
 
-    patterns = (p_SELECT, p_COUNT, p_DROP, p_DELETE)
-    band = False
-    for i in patterns:
-        if i.match(sql_string):
-            band = True
-            return 1
-    if band==False:
-        return 0
+    p_SELECT = re.compile('(SELECT((?!$|\W|\w+\W|'+keywords+')|\*|\w+|\w+,\w+)FROM)(?!$|\W|\w+\W|'+keywords+')')
+    p_COUNT = re.compile('(SELECTCOUNT\(((?!$|\W|\w+\W|'+keywords+')|\w+)\)FROM)(?!$|\W|\w+\W|'+keywords+')')
+    p_DROP = re.compile('DROPTABLE(?!$|\W|\w+\W|'+keywords+')')
+    p_TRUNCATE = re.compile('TRUNCATETABLE(?!$|\W|\w+\W|'+keywords+')')
+    # p_DELETEFROM
+    # p_INSERTINTO
+
+    # p_DELETE = re.compile('DELETEFROM\w+WHERE\w+[=|>|<|>=|<=|<>](\'\w+\'||\d+)')
+    patterns = {
+        "SELECT": p_SELECT,
+        "SELECT COUNT": p_COUNT,
+        "DROP TABLE": p_DROP,
+        "TRUNCATE TABLE": p_TRUNCATE
+    }
+
+    print(p_SELECT.match(sql_string))
+    for key, value in patterns.items():
+        if value.match(sql_string):
+            return 1, key
+    return 0,0
 
     # DELETE FROM Customers WHERE CustomerName='Alfreds Futterkiste';
     # DELETE FROM table_name;
@@ -49,23 +39,6 @@ def evaluate_sql(sql_string):
     #p_DELETE = re.compile('DELETEFROM((?!$|\W|\w+\W|'+keywords+'))+(WHERE((?!$|\W|\w+\W))+[=|>|<|>=|<=|<>](\'\w+\'|\d+))*')
 
    # p_DELETE = re.compile('DELETEFROM(?!$|\W|\w+\W|'+keywords+')WHERE')
-    #p_SELECT = re.compile('SELECT(DISTINCT)?(['+var+']+)FROM(?!$|'+table_name+')')
-    #p_BETWEEN = re.compile(r'SELECT('+var+')FROM('+var+')WHERE('+var+')BETWEEN\dAND\d')
-
-# def classify(split_string, sql_string):
-    
-#     # get all the possible identifiers that are not in
-#     # reserved_keywords
-#     for i in split_string:
-#         if i.isidentifier() == True and i not in reserved_keywords:
-#             identifiers_in_data.append(i)
-    
-#     # for i, j in enumerate(identifiers_in_data):
-#     #     if j[0] != "_":
-#     #         IDENTIFIERS.append(j)
-    
-#     delete_repeated_identifier(identifiers_in_data, sql_string)
-#  #   return keywords_in_data, IDENTIFIERS, operators_in_data, numbers_in_data
 
 def run():
     user_input = input("\nA continuación ingrese una sentencia SQL:\n")
