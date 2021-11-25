@@ -30,7 +30,7 @@ def myClick():
         a = 'Tokens:\n\n'
         a += '\n'.join('{} {}'.format(k, d) for k, d in tokenDict.items())
         
-        lbTokens = Label(gui, text=a, font=('Helvetica',12,'bold'), justify=LEFT)#, bg="RoyalBlue3", fg="white", justify=LEFT)
+        lbTokens = Label(gui, text=a, font=('Helvetica',12,'bold'), justify=LEFT, bg="linen")
         lbTokens.place(x=30, y=180)
     else:
         myLabel = Label(gui, text="Sintaxis incorrecta.", font=('Helvetica',12,'bold'), bg="red", fg="white")
