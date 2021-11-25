@@ -14,31 +14,25 @@ def evaluate_sql(sql_string):
     p_COUNT = re.compile('(SELECTCOUNT\(((?!$|\W|\w+\W|'+keywords+')|\w+)\)FROM)(?!$|\W|\w+\W|'+keywords+')')
     p_DROP = re.compile('DROPTABLE(?!$|\W|\w+\W|'+keywords+')')
     p_TRUNCATE = re.compile('TRUNCATETABLE(?!$|\W|\w+\W|'+keywords+')')
-    # p_DELETEFROM
-    # p_INSERTINTO
+    p_DELETE = re.compile('DELETEFROM(\w+)(?<!['+keywords+'])WHERE(\w+)(?<!['+keywords+'])(=|>|<|(=)*|<(=)*|<(>)*)(\'\w+\'|\d+)(?<!['+keywords+'])')
 
-    # p_DELETE = re.compile('DELETEFROM\w+WHERE\w+[=|>|<|>=|<=|<>](\'\w+\'||\d+)')
     patterns = {
         "SELECT": p_SELECT,
         "SELECT COUNT": p_COUNT,
         "DROP TABLE": p_DROP,
-        "TRUNCATE TABLE": p_TRUNCATE
+        "TRUNCATE TABLE": p_TRUNCATE,
+        "DELETE": p_DELETE
     }
 
-    print(p_SELECT.match(sql_string))
     for key, value in patterns.items():
-        if value.match(sql_string):
-            return 1, key
+        print(value.match(sql_string))
+        if key == "DELETE":
+            if value.fullmatch(sql_string):
+                return 1, key
+        else:
+            if value.match(sql_string):
+                return 1, key
     return 0,0
-
-    # DELETE FROM Customers WHERE CustomerName='Alfreds Futterkiste';
-    # DELETE FROM table_name;
-    # DELETE FROM Customer WHERE name='Elmer'
-    # DELETE FROM Customer
-    # DELETE FROM Customer WHERE
-    #p_DELETE = re.compile('DELETEFROM((?!$|\W|\w+\W|'+keywords+'))+(WHERE((?!$|\W|\w+\W))+[=|>|<|>=|<=|<>](\'\w+\'|\d+))*')
-
-   # p_DELETE = re.compile('DELETEFROM(?!$|\W|\w+\W|'+keywords+')WHERE')
 
 def run():
     user_input = input("\nA continuación ingrese una sentencia SQL:\n")
