@@ -41,7 +41,7 @@ def evaluate_sql(sql_string):
     
     p_TRUNCATE = re.compile('TRUNCATE[\s]TABLE[\s]([a-zA-Z]+)(?<!['+keywords+'])')
     
-    p_DELETE = re.compile('DELETE[\s]FROM[\s]([a-zA-Z]+)(?<!['+keywords+'])[\s]WHERE[\s]([a-zA-Z]+)(?<!['+keywords+'])(=|>|<|(=)*|<(=)*|<(>)*)(\'\w+\'|\d+)(?<!['+keywords+'])')
+    p_DELETE = re.compile('DELETE[\s]FROM[\s]([a-zA-Z]+)(?<!['+keywords+'])[\s]WHERE[\s]([a-zA-Z]+)(?<!['+keywords+'])(=|>(=)*|<(>|=)*|)(\'\w+\'|\d+)(?<!['+keywords+'])')
 
     patterns = {
         "SELECT": p_SELECT,
