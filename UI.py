@@ -4,23 +4,37 @@ import sqlParser
 
 gui = Tk()
 gui.title('Analizador Sintáctico SQL')
-gui.geometry('550x190')
+gui.geometry('550x320')
 
 entry_ = Entry(gui, width=60, borderwidth=2, font=('Consolas',11,'bold'))
 lbStart = Label(gui, text="A continuación, ingrese un comando SQL:", font=('Helvetica',11,'bold'))
 myLabel = Label(gui)
+lbTokens = Label(gui)
 
 def myClick():
     global myLabel
+    global lbTokens
+
     myLabel.destroy()
+    lbTokens.destroy()
+
     sql_string = entry_.get()
-    #sql_string = ''.join(re.split(' ', user_input))
     result, query_type = sqlParser.evaluate_sql(sql_string)
+
     if result == 1:
-        myLabel = Label(gui, text=f'La sentencia {query_type} es correcta.', font=('Helvetica',12,'bold'), bg="RoyalBlue1", fg="white")
+        myLabel = Label(gui, text=f'La sentencia {query_type} es correcta.', font=('Helvetica',12,'bold'), bg="RoyalBlue3", fg="white")
+        
+        #get tokens
+        findTokens = re.findall('\w+|\W', sql_string)
+        tokenDict = sqlParser.get_tokens(findTokens)
+        a = 'Tokens:\n\n'
+        a += '\n'.join('{} {}'.format(k, d) for k, d in tokenDict.items())
+        
+        lbTokens = Label(gui, text=a, font=('Helvetica',12,'bold'), justify=LEFT)#, bg="RoyalBlue3", fg="white", justify=LEFT)
+        lbTokens.place(x=30, y=180)
     else:
         myLabel = Label(gui, text="Sintaxis incorrecta.", font=('Helvetica',12,'bold'), bg="red", fg="white")
-
+    
     myLabel.place(x=30, y=140)
 
 def on_enter(e):

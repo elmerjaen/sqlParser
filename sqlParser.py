@@ -3,7 +3,31 @@
 
 import re
 
-keywords = 'SELECT|FROM|DISTINCT|WHERE|BETWEEN|AND|COUNT|DROP|TABLE'
+keywords = 'SELECT|FROM|DISTINCT|WHERE|BETWEEN|AND|COUNT|DROP|TRUNCATE|TABLE|DELETE'
+
+def get_tokens(a):
+
+    token_list = [x.strip(' ') for x in a]
+    p_keywords = re.compile(keywords)
+    p_var = re.compile('(\w+)(?<!['+keywords+']|[\d+])')
+    p_numbers = re.compile('\d+')
+    p_special_characters = re.compile('\W')
+
+    t = {}
+    tokens = {
+        "Palabras reservadas:": p_keywords,
+        "Variables:": p_var,
+        "Números:": p_numbers,
+        "Caracteres especiales:": p_special_characters
+    }
+
+    for key, value in tokens.items():
+        for i in token_list:
+            if value.match(i):
+                if key not in t:
+                    t[key] = list()
+                t[key].append(i)
+    return t
 
 def evaluate_sql(sql_string):
 
@@ -33,10 +57,3 @@ def evaluate_sql(sql_string):
             print(value.fullmatch(sql_string))
             return 1, key
     return 0,0
-
-def run():
-    sql_string = input("\nA continuación ingrese una sentencia SQL:\n")
-    evaluate_sql(sql_string)
-  
-if __name__ == '__main__':
-  run()
